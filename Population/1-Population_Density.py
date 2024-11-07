@@ -2,12 +2,7 @@
 Name: Birfatehjit Grewal
 SFU_ID: 301467843
 
-Citations: The code referenced the notes from class and the following websites:
-            
-    https://www.geeksforgeeks.org/pandas-dataframe-interpolate/
-    https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html
-    https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.reindex.html
-    https://www.geeksforgeeks.org/reindexing-in-pandas-dataframe/
+Citations: The code referenced the notes from class
 """
 
 import numpy as np
