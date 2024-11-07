@@ -1,10 +1,8 @@
 import pandas as pd
 import os
 
-# Define the folder containing the individual climate CSV files
 data_folder = "climate_data_seperate"
 
-# Initialize an empty list to store each DataFrame
 dataframes = []
 
 # Loop through each CSV file in the data folder
@@ -16,10 +14,8 @@ for filename in os.listdir(data_folder):
         # Read the CSV file
         df = pd.read_csv(file_path)
 
-        # Append to list of DataFrames
         dataframes.append(df)
 
-# Concatenate all DataFrames into a single DataFrame
 combined_data = pd.concat(dataframes, ignore_index=True)
 
 # Save the combined data to a new CSV file
