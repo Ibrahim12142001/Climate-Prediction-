@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-data_folder = "data"
+data_folder = "weather_data_seperate"
 
 dataframes = []
 

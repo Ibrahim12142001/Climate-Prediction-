@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Define the folder containing the individual climate CSV files
-data_folder = "climate_data"
+data_folder = "climate_data_seperate"
 
 # Initialize an empty list to store each DataFrame
 dataframes = []
