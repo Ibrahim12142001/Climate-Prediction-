@@ -5,23 +5,18 @@ from retry_requests import retry
 import json
 import os
 
-# Setup the Open-Meteo API client with cache and retry on error
 cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
 retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 openmeteo = openmeteo_requests.Client(session=retry_session)
 
-# Base URL for the Open-Meteo climate API
 url = "https://climate-api.open-meteo.com/v1/climate"
 
-# Define the folder to save the CSV files
 output_folder = "climate_data"
 os.makedirs(output_folder, exist_ok=True)
 
-# Load locations from capitals.json
 with open("capitals.json", "r") as f:
     locations = json.load(f)
 
-# Define the parameters for the climate data with selected daily variables
 params_base = {
     "start_date": "2000-01-01",
     "end_date": "2010-12-31",
@@ -42,11 +37,9 @@ for city_name, info in locations.items():
     })
     
     try:
-        # Fetch data from Open-Meteo API
         responses = openmeteo.weather_api(url, params=params)
         response = responses[0]
 
-        # Process daily data and extract each variable
         daily = response.Daily()
         daily_data = {
             "date": pd.date_range(
@@ -55,11 +48,10 @@ for city_name, info in locations.items():
                 freq=pd.Timedelta(seconds=daily.Interval()),
                 inclusive="left"
             ),
-            "city": city_name,  # Add city name
-            "province_or_state": info.get("state", info.get("province", ""))  # Add province or state
+            "city": city_name,  
+            "province_or_state": info.get("state", info.get("province", ""))  
         }
         
-        # Add each requested daily variable to daily_data
         for i, variable_name in enumerate(params["daily"]):
             daily_data[variable_name] = daily.Variables(i).ValuesAsNumpy()
 
