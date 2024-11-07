@@ -3,22 +3,16 @@ import pandas as pd
 import json
 import time
 
-# Load the capitals data from JSON
 with open("capitals.json", "r") as f:
     capitals = json.load(f)
 
-# Load the missing data information from missing.json
-with open("missing.json", "r") as f:
-    missing_data = json.load(f)
 
-# Define the base URL for Open-Meteo API
 url = "https://archive-api.open-meteo.com/v1/archive"
 
-# Define a delay in seconds to avoid rate limits
 request_delay = 5   
 
 # Loop through each missing entry and retry the request
-for entry in missing_data:
+for entry in capitals:
     city_name = entry['city']
     years = entry['years']
     info = capitals.get(city_name)
@@ -29,12 +23,9 @@ for entry in missing_data:
 
     print(f"Retrying data for {city_name}...")
 
-    # Initialize an empty DataFrame to store data for the city
     city_data = pd.DataFrame()
 
-    # Loop through each year that needs retrying
     for year in years:
-        # Define the API parameters
         params = {
             "latitude": info['latitude'],
             "longitude": info['longitude'],
@@ -44,10 +35,9 @@ for entry in missing_data:
             "timezone": "auto"
         }
 
-        # Fetch data from Open-Meteo API with retry and delay
         try:
             response = requests.get(url, params=params)
-            response.raise_for_status()  # Raise an error if the request fails
+            response.raise_for_status()  
 
             # Process the response JSON
             data = response.json()
@@ -73,17 +63,14 @@ for entry in missing_data:
         # Wait before the next request to avoid hitting the rate limit
         time.sleep(request_delay)
 
-    # Save the city's data to a CSV file if data was retrieved
     if not city_data.empty:
-        # Append or update the existing CSV if it exists
         file_path = f"{city_name}_daily_weather_2000_2010.csv"
         try:
             existing_data = pd.read_csv(file_path)
             updated_data = pd.concat([existing_data, city_data], ignore_index=True)
         except FileNotFoundError:
-            updated_data = city_data  # No existing data; use new data directly
+            updated_data = city_data  
 
-        # Save updated data to CSV
         updated_data.to_csv(file_path, index=False)
         print(f"Daily weather data for {city_name} updated successfully.")
     else:
