@@ -127,16 +127,24 @@ def main():
     # The state emissions data consists of 50 files, one for each state
     # So we need to read them one by one, extract the relevant data/fields
     # And save them to a more usable format
+    # to read the xlsx files with Pandas you need to pip install openpyxl
     state_data_path = './state_emissions_data/'
     state_yearly_emission_data = extract_state_data(state_data_path)
-    print(state_yearly_emission_data)
 
     # The province emissions data on the other hand is a single csv file.
     # Therefore, we just need to load it, filter down the table and we'll
     # have our data.
-    province_data_file = './EN_GHG_Econ_Can_Prov_Terr.csv'
+    province_data_file = './province_emissions_data/EN_GHG_Econ_Can_Prov_Terr.csv'
     province_yearly_emission_data = extract_province_data(province_data_file)
-    print(province_yearly_emission_data)
+
+    # Canadian data only starts at 1990, so we'll drop everything in the US data before that
+    state_yearly_emission_data = state_yearly_emission_data[state_yearly_emission_data['year'] >= 1990]
+
+    # At this point, data has been extracted, and is ready for transforming
+    if not os.path.exists('./extracted_data/'):
+        os.mkdir('./extracted_data/')
+    state_yearly_emission_data.to_csv('./extracted_data/state_emission_data.csv', index=False)
+    province_yearly_emission_data.to_csv('./extracted_data/province_emission_data.csv', index=False)
 
 
 if __name__ == '__main__':
