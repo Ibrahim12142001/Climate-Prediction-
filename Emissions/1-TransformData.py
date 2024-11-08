@@ -19,6 +19,8 @@ def read_state_population_data(state_pop_file):
     # the default column names are inferred from the excel spreadsheet but they suck
     pop_data.columns = ['state', '2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010']
     pop_data['state'] = pop_data['state'].str.removeprefix('.')
+    pop_data = pop_data[pop_data['state'] != 'District of Columbia'] # not using this data
+    pop_data['state'] = pop_data['state'].apply(lambda x: state_abbv_map[x]) # convert to state codes
     pop_data = pop_data.set_index('state')
     pop_data = pop_data.astype(np.int64)
     return pop_data
@@ -30,6 +32,7 @@ def read_province_population_data(province_pop_file):
     pop_data = pop_data[['REF_DATE', 'GEO', 'VALUE']] # trim down to the columns we want
     pop_data.columns = ['year', 'province', 'value'] # rename columns
     pop_data['year'] = pop_data['year'].dt.year
+    pop_data['province'] = pop_data['province'].apply(lambda x: province_abbv_map[x])
     pop_data = pop_data.sort_values(by=['province', 'year'])
     return pop_data
 
@@ -52,7 +55,19 @@ def interpolate_monthly(data, state_or_province):
     return pd.concat(interpolated_data, ignore_index=True)
 
 def transform_to_us_cities(state_data, cities_data, city_population_data, state_population_data):
-    print(state_data)
+    # map the state back to the given city
+    state_data['city'] = state_data['state'].apply(
+        lambda x: cities_data[cities_data['state'] == x].index[0])
+    def scale_using_population(row):
+        # Scale using a ratio of City population / State population, for a given year
+        city_cond = (city_population_data['City'] == row['city']) & (city_population_data['Year'] == row['year'])
+        city_pop = city_population_data.loc[city_cond, 'Population'].values[0] # using column values to search
+        state_pop = state_population_data.loc[row['state'], str(row['year'])] # nicer exact index access
+        return row['megatonnes CO2'] * (city_pop / state_pop)
+    state_data['megatonnes CO2'] = state_data.apply(scale_using_population, axis=1)
+    # Now the data has been scaled!
+    city_data = state_data[['date', 'city', 'megatonnes CO2', 'year', 'month']]
+    return city_data
 
 def transform_to_canada_cities(province_data, cities_data, city_population_data, province_population_data):
     pass
@@ -71,7 +86,7 @@ def main():
     interpolated_state_data = interpolated_state_data[interpolated_state_data['year'] <= 2010]
     interpolated_province_data = interpolated_province_data[interpolated_province_data['year'] >= 2000]
     interpolated_province_data = interpolated_province_data[interpolated_province_data['year'] <= 2010]
-    
+
     # Read in the cities data
     cities_data = pd.read_json('../capitals.json').transpose()
 
@@ -87,6 +102,7 @@ def main():
     # Process each data file to convert them from State/Province emissions to estimated City emissions
     us_city_emissions = transform_to_us_cities(interpolated_state_data, cities_data, city_population_data, state_population_data)
     canada_city_emissions = transform_to_canada_cities(interpolated_province_data, cities_data, city_population_data, province_population_data)
+    print(us_city_emissions)
 
     # Merge city data and export it as our final step!
     
