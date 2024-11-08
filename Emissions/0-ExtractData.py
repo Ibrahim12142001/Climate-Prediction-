@@ -57,13 +57,26 @@ state_names_to_abbv_map = {
     "Wyoming": "WY",
 }
 
+province_abbv_map = {
+    'Alberta': 'AB',
+    'British Columbia': 'BC',
+    'Manitoba': 'MB',
+    'New Brunswick': 'NB',
+    'Newfoundland and Labrador': 'NL',
+    'Nova Scotia': 'NS',
+    'Ontario': 'ON',
+    'Prince Edward Island': 'PE',
+    'Quebec': 'QC',
+    'Saskatchewan': 'SK'
+}
+
 YEAR_ROW = 2
 TRANSPORTATION_TOTAL_ROW = 25
 
-# Reads all of the raw data files, extracts the relevant fields and puts it into a nice dataframe
-def extract_transportation_data(state_data_path):
+# Reads all of the raw state data files, extracts the relevant fields and puts it into a nice dataframe
+def extract_state_data(state_data_path):
     all_state_data = None
-    for file in os.scandir(state_data_path):
+    for file in sorted(os.scandir(state_data_path), key=lambda f: f.name):
         # determine the state from the file name
         state = file.name.split('.')[0].title()
         state_abbv = state_names_to_abbv_map[state]
@@ -93,13 +106,37 @@ def extract_transportation_data(state_data_path):
             all_state_data = pd.concat([all_state_data, data])
     return all_state_data
 
+def extract_province_data(province_data_file):
+    # Read in the data file
+    data = pd.read_csv(province_data_file)
+
+    # Filter our data down to the Transport sector and totals
+    data = data[data['Total'] == 'y']
+    data = data[data['Source'] == 'Transport']
+    data = data[data['Sector'].isna()]
+    data = data[data['Region'].isin(province_abbv_map.keys())] # keep the provinces we want
+    data = data.sort_values(by=['Region', 'Year'])
+    data['CO2eq'] = data['CO2eq'].astype(np.float64) / 1000 # convert from kilotonnes to megatonnes
+    data = data[['Year', 'Region', 'CO2eq']] # extract the fields we want
+    data['Region'] = data['Region'].apply(lambda x: province_abbv_map[x]) # convert to the agreed abbreviations
+    data = data.rename(columns={'Year': 'year', 'Region': 'province', 'CO2eq': 'megatonnes CO2'})
+    data = data.reset_index()[['province', 'year', 'megatonnes CO2']]
+    return data
 
 def main():
     # The state emissions data consists of 50 files, one for each state
     # So we need to read them one by one, extract the relevant data/fields
     # And save them to a more usable format
     state_data_path = './state_emissions_data/'
-    state_yearly_emission_data = extract_transportation_data(state_data_path)
+    state_yearly_emission_data = extract_state_data(state_data_path)
+    print(state_yearly_emission_data)
+
+    # The province emissions data on the other hand is a single csv file.
+    # Therefore, we just need to load it, filter down the table and we'll
+    # have our data.
+    province_data_file = './EN_GHG_Econ_Can_Prov_Terr.csv'
+    province_yearly_emission_data = extract_province_data(province_data_file)
+    print(province_yearly_emission_data)
 
 
 if __name__ == '__main__':
