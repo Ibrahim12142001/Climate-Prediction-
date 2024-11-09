@@ -54,15 +54,15 @@ def interpolate_monthly(data, state_or_province, interpolate_field):
 def scale_using_population(row, city_pop_data, national_pop_data, state_or_province):
     # Scale using a ratio of City population / State population, for a given date
     city_cond = (city_pop_data['City'] == row['city']) & (city_pop_data['date'] == row['date'])
-    city_pop = city_pop_data.loc[city_cond, 'Population'].values
-    if len(city_pop) == 0:
-        # Some cities need more interpolation, so workaround for now by just using whatever data is available
-        city_cond = (city_pop_data['City'] == row['city']) & (city_pop_data['Year'] == row['year'])
-        city_pop = city_pop_data.loc[city_cond, 'Population'].values
+    city_pop = city_pop_data.loc[city_cond, 'Population'].values[0]
+    # if len(city_pop) == 0:
+    #     # Some cities need more interpolation, so workaround for now by just using whatever data is available
+    #     city_cond = (city_pop_data['City'] == row['city']) & (city_pop_data['Year'] == row['year'])
+    #     city_pop = city_pop_data.loc[city_cond, 'Population'].values
     state_cond = (national_pop_data[state_or_province] == row[state_or_province]) \
         & (national_pop_data['date'] == row['date'])
-    state_pop = national_pop_data.loc[state_cond, 'value'].values
-    return row['megatonnes CO2'] * (city_pop[0] / state_pop[0])
+    state_pop = national_pop_data.loc[state_cond, 'value'].values[0]
+    return row['megatonnes CO2'] * (city_pop / state_pop)
 
 def transform_to_us_cities(state_data, cities_data, city_population_data, state_population_data):
     # map the state back to the given city
@@ -78,7 +78,6 @@ def transform_to_canada_cities(province_data, cities_data, city_population_data,
     # map the province back to the given city
     province_data['city'] = province_data['province'].apply(
         lambda x: cities_data[cities_data['province'] == x].index[0])
-    print(province_data)
     province_data['megatonnes CO2'] = province_data.apply(scale_using_population, axis=1,
         args=(city_population_data, province_population_data, 'province'))
     # Now the data has been scaled!
@@ -116,29 +115,26 @@ def main():
     province_population_data = read_province_population_data('./national_population_data/province_pop_data_2000-2011.csv')
     province_population_data = interpolate_monthly(province_population_data, 'province', 'value')
     province_population_data = province_population_data[province_population_data['year'] <= 2010]
-    print(city_population_data)
-    print(state_population_data)
-    print(province_population_data)
 
     # Process each data file to convert them from State/Province emissions to estimated City emissions
     us_city_emissions = transform_to_us_cities(interpolated_state_data, cities_data, city_population_data, state_population_data)
     canada_city_emissions = transform_to_canada_cities(interpolated_province_data, cities_data, city_population_data, province_population_data)
 
     # Checking the graphs of the CO2 emissions as a sanity check
-    for city in us_city_emissions['city'].unique():
-        city_rows = us_city_emissions[us_city_emissions['city'] == city]
-        plt.plot(city_rows['date'], city_rows['megatonnes CO2'], 'b.')
-        plt.title(f'{city} Estimated CO2 Emissions 2000-2010')
-        plt.show()
-    for city in canada_city_emissions['city'].unique():
-        city_rows = canada_city_emissions[canada_city_emissions['city'] == city]
-        plt.plot(city_rows['date'], city_rows['megatonnes CO2'], 'b.')
-        plt.title(f'{city} Estimated CO2 Emissions 2000-2010')
-        plt.show()
+    # for city in us_city_emissions['city'].unique():
+    #     city_rows = us_city_emissions[us_city_emissions['city'] == city]
+    #     plt.plot(city_rows['date'], city_rows['megatonnes CO2'], 'b.')
+    #     plt.title(f'{city} Estimated CO2 Emissions 2000-2010')
+    #     plt.show()
+    # for city in canada_city_emissions['city'].unique():
+    #     city_rows = canada_city_emissions[canada_city_emissions['city'] == city]
+    #     plt.plot(city_rows['date'], city_rows['megatonnes CO2'], 'b.')
+    #     plt.title(f'{city} Estimated CO2 Emissions 2000-2010')
+    #     plt.show()
 
     # Merge city data and export it as our final step!
-    
-
+    combined_data = pd.concat([us_city_emissions, canada_city_emissions])
+    combined_data.to_csv('city_emissions_data.csv', index=False)
 
 if __name__ == '__main__':
     main()
