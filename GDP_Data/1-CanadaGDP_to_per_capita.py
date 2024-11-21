@@ -10,7 +10,7 @@ pop_file = "HelperFiles/province_pop_data_2000-2011.csv"
 
 
 
-# Greage's code for province population
+# Greg's code for province population
 def read_province_population_data(province_pop_file):
     pop_data = pd.read_csv(province_pop_file, parse_dates=[0])
     pop_data = pop_data[pop_data['GEO'].isin(province_abbv_map.keys())] # keep only provinces we want
