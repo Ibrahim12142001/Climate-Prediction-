@@ -21,12 +21,12 @@ The exact sequence of file to run and in which order can be found below. The pyt
 - 1-TransformData.py
 
 **GDP_Data**
-- 0-inter.py
+- 0-USA_GDP_per_capita.py
 - 1-CanadaGDP_to_per_capita.py
 - 2-Combine_US_Canada_GDP_Data.py
 
 **Population**
-- 0-Year_Interpolation.py
+- 0-Extract_Data_And_Interpolation.py
 - 1-Population_Density.py
 
 **Weather**
