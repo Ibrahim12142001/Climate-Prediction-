@@ -11,11 +11,13 @@ Citations: The code referenced the notes from class and the following websites:
 """
 import numpy as np
 import pandas as pd
-import sys
 import os
 
 MAX_YEAR = 2010
 MIN_YEAR = 2000
+
+file_path = "Manual_Population_data_collection.xlsx"
+dir_path = "population_datasets/"
 
 def interpolate_monthly_data(data):
     interpolated_data = []
@@ -61,8 +63,6 @@ def handle_Directory(dir_path):
 
 
 def main():
-    file_path = sys.argv[1]
-
     if file_path.endswith('.csv'):
         data = pd.read_csv(file_path)
     elif file_path.endswith('.xlsx'):
@@ -70,8 +70,6 @@ def main():
     
     interpolated_data = interpolate_monthly_data(data)
     
-    
-    dir_path = sys.argv[2]
     
     dir_data = handle_Directory(dir_path)
     Final = pd.concat((interpolated_data,dir_data),ignore_index=True)

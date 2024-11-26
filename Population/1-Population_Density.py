@@ -10,9 +10,11 @@ import pandas as pd
 import sys
 import os
 
+area_path = "Manual_area_collection.xlsx"
+population_path = "Population_data.csv"
+    
 def main():
-    area_path = sys.argv[1]
-    population_path = sys.argv[2]
+
     area_data = pd.read_excel(area_path)
     population_data = pd.read_csv(population_path)
     area_data['City'] = area_data['City'].astype(str)

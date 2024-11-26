@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 
-# Directory containing the CSV files
-file_directory = "USA/"  # Replace with your folder path
+
+file_directory = "USA/"
 MAX_YEAR = 2010
 MIN_YEAR = 2000
 

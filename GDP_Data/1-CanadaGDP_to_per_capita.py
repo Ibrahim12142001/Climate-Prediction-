@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from HelperFiles.shared import province_abbv_map
 
-file_directory = "Canada/"  # Replace with your folder path
+file_directory = "Canada/"
 MAX_YEAR = 2010
 MIN_YEAR = 2000
 
@@ -49,9 +49,9 @@ merged_data = pd.merge(city_province, pop_data, on=['province'], how='inner')
 def process_file(file_path, city_name): 
     data = pd.read_excel(
         file_path,
-        sheet_name=1,       # Read from the second sheet (index starts at 0)
+        sheet_name=1,       # Read from the second sheet
         skiprows=5,         # Skip the first 5 rows
-        usecols='B:C',       # Read from column B onwards (adjust 'Z' as needed)
+        usecols='B:C',       # Read from column B and C
         header=None,         # Avoid treating any row as the header
         names=['year','GDP']
     )
