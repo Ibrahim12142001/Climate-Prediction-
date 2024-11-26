@@ -1,6 +1,20 @@
 # CMPT353 Climate Change Project
 ## Project Description
 
+## Python Dependencies
+Please pip install the following before running the code:
+1. pip install openmeteo-requests
+2. pip install requests-cache
+3. pip install pandas
+4. pip install retry-requests
+5. pip install matplotlib
+6. pip install openpyxl
+7. pip install xlrd
+
+Or use the requirement.txt to pip install the Dependencies:
+
+**pip install -r requirements.txt**
+
 ## Detailed Step On How To Run The Code
 The code for this project can be divided into 3 seperate catagories
 1. Data Processing
