@@ -1,6 +1,20 @@
 # CMPT353 Climate Change Project
 ## Project Description
 
+## Python Dependencies
+Please pip install the following before running the code:
+1. pip install openmeteo-requests
+2. pip install requests-cache
+3. pip install pandas
+4. pip install retry-requests
+5. pip install matplotlib
+6. pip install openpyxl
+7. pip install xlrd
+
+Or use the requirement.txt to pip install the Dependencies:
+
+**pip install -r requirements.txt**
+
 ## Detailed Step On How To Run The Code
 The code for this project can be divided into 3 seperate catagories
 1. Data Processing
@@ -8,25 +22,21 @@ The code for this project can be divided into 3 seperate catagories
 3. Machine Learning Model
 
 ### Data Processing
-The data processing step takes in the raw data and applies ETL to obtain usable data for other steps. The project includes 5 different dirrectories to handle raw data from each fields. The data in these directories can be processed in any order as long an all the raw data is processed before combining the data.
+The data processing step takes in the raw data and applies ETL to obtain usable data for other steps. The project includes 4 different dirrectories to handle raw data from each fields. The data in these directories can be processed in any order as long an all the raw data is processed before combining the data.
 
-The exact sequence of file to run and in which order can be found below. The python files do not require any additional inputs. The input file paths are hard coded based on this reposotorys.
-
-**Climate_Change**
-- 0-ExtractData.py
-- 1-CombineData.py
+The exact sequence of files to run and in which order can be found below. The python files do not require any additional inputs. The input file paths are hard coded based on this reposotorys.
 
 **Emissions**
 - 0-ExtractData.py
 - 1-TransformData.py
 
 **GDP_Data**
-- 0-inter.py
+- 0-USA_GDP_per_capita.py
 - 1-CanadaGDP_to_per_capita.py
 - 2-Combine_US_Canada_GDP_Data.py
 
 **Population**
-- 0-Year_Interpolation.py
+- 0-Extract_Data_And_Interpolation.py
 - 1-Population_Density.py
 
 **Weather**
