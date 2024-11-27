@@ -34,11 +34,11 @@ def read_province_population_data(province_pop_file):
     return pop_data
 
 
-def interpolate_monthly(data, state_or_province, interpolate_field):
+def interpolate_monthly(data, state_or_province, interpolate_field, starting_month='01'):
     interpolated_data = []
     # Interpolation code is based on the yearly interpolation code for the population data
     for name, group in data.groupby(state_or_province):
-        group['date'] = pd.to_datetime(group['year'].astype(str) + '-01-01')
+        group['date'] = pd.to_datetime(group['year'].astype(str) + f'-{starting_month}-01')
         group.set_index('date', inplace=True)
         monthly_index = pd.date_range(start=group.index.min(), end=group.index.max(), freq='MS')
         group = group.reindex(monthly_index)
@@ -55,10 +55,6 @@ def scale_using_population(row, city_pop_data, national_pop_data, state_or_provi
     # Scale using a ratio of City population / State population, for a given date
     city_cond = (city_pop_data['City'] == row['city']) & (city_pop_data['date'] == row['date'])
     city_pop = city_pop_data.loc[city_cond, 'Population'].values[0]
-    # if len(city_pop) == 0:
-    #     # Some cities need more interpolation, so workaround for now by just using whatever data is available
-    #     city_cond = (city_pop_data['City'] == row['city']) & (city_pop_data['Year'] == row['year'])
-    #     city_pop = city_pop_data.loc[city_cond, 'Population'].values
     state_cond = (national_pop_data[state_or_province] == row[state_or_province]) \
         & (national_pop_data['date'] == row['date'])
     state_pop = national_pop_data.loc[state_cond, 'value'].values[0]
@@ -90,8 +86,8 @@ def main():
     province_data = pd.read_csv('./extracted_data/province_emission_data.csv')
 
     # Do interpolation first so we have nice trends in the data
-    interpolated_state_data = interpolate_monthly(state_data, 'state', 'megatonnes CO2')
-    interpolated_province_data = interpolate_monthly(province_data, 'province', 'megatonnes CO2')
+    interpolated_state_data = interpolate_monthly(state_data, 'state', 'megatonnes CO2', '12')
+    interpolated_province_data = interpolate_monthly(province_data, 'province', 'megatonnes CO2', '12')
 
     # Now that we have interpolated, we can now chop off to the years we want
     interpolated_state_data = interpolated_state_data[interpolated_state_data['year'] >= 2000]
