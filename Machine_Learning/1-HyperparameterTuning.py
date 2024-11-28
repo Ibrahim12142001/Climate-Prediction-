@@ -29,15 +29,16 @@ def main():
         RandomForestRegressor()
     )
     param_grid = {
-        'randomforestregressor__n_estimators': [100, 200, 300, 400, 500],
+        'randomforestregressor__n_estimators': [400, 500, 600, 700, 800],
         'randomforestregressor__max_depth': [5, 10, 15, 20, 25, 30, None],
         'randomforestregressor__min_samples_leaf': [1, 3, 5, 10, 15, 20],
         'randomforestregressor__min_samples_split': [2, 5, 10, 15, 20, 30],
         'randomforestregressor__max_features': ['sqrt', 'log2', None]
     }
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=8)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, n_jobs=8)
     grid_search.fit(X_train, y_train)
     print(grid_search.best_params_)
+    # this took a super long time to run, but it spit out: max_depth: 20, max_features: log2, min_samples_leaf: 1, min_samples_split: 2, n_estimators: 500
 
 
 if __name__ == '__main__':

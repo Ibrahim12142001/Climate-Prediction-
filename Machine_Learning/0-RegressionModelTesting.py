@@ -47,7 +47,7 @@ def main():
             'name': 'RandomForestRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                RandomForestRegressor(n_estimators=200)
+                RandomForestRegressor(n_estimators=500, max_depth=20, max_features='log2', min_samples_leaf=1, min_samples_split=2)
             )
         },
         {
@@ -99,7 +99,7 @@ def main():
             'name': 'MLPRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                MLPRegressor(hidden_layer_sizes=(100, 100), solver='adam', activation='logistic', max_iter=200)
+                MLPRegressor(hidden_layer_sizes=(128, 256, 128), solver='adam', activation='logistic', max_iter=5000)
             )
         }
     ]
