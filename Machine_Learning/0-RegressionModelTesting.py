@@ -40,7 +40,7 @@ def main():
             'name': 'KNeighbors Regressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                KNeighborsRegressor(n_neighbors=9)
+                KNeighborsRegressor(n_neighbors=15, algorithm='auto', leaf_size=5, p=1, weights='distance')
             )
         },
         {
