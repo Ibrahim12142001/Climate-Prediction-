@@ -109,7 +109,6 @@ merged_data.drop(['province'], axis=1, inplace=True)
 data = pd.concat([data, merged_data],ignore_index=True)
 
 data = data[(data['year'] >= MIN_YEAR)]
-print(data.columns)
 
 
 data.to_csv('state_province_population.csv', index=False)
