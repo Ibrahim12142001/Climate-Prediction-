@@ -19,7 +19,7 @@ def main():
     data = pd.read_csv(combined_data_path)
 
     # Extract the X and y data, X = input features, y = output values
-    X = data[['megatonnes CO2', 'GDP per Capita', 'precipitation_sum', 'wind_speed_10m_max', 'Population Density']]
+    X = data[['megatonnes CO2', 'GDP per Capita']]
     y = data[['temperature_2m_max', 'temperature_2m_min']] # regress on two values
     # y = (data['temperature_2m_max'] + data['temperature_2m_min']) / 2 # average temperature
     # y = data['temperature_2m_max'] - data['temperature_2m_min'] # temperature range
@@ -40,14 +40,14 @@ def main():
             'name': 'KNeighbors Regressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                KNeighborsRegressor(n_neighbors=15, algorithm='auto', leaf_size=5, p=1, weights='distance')
+                KNeighborsRegressor(n_neighbors=3, algorithm='auto', leaf_size=5, p=1, weights='distance')
             )
         },
         {
             'name': 'RandomForestRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                RandomForestRegressor(n_estimators=500, max_depth=20, max_features='log2', min_samples_leaf=1, min_samples_split=2)
+                RandomForestRegressor(n_estimators=900, max_depth=30, max_features=None, min_samples_leaf=1, min_samples_split=2)
             )
         },
         {
@@ -92,14 +92,14 @@ def main():
             'name': 'PLSRegression',
             'model': make_pipeline(
                 MinMaxScaler(),
-                PLSRegression(n_components=4)
+                PLSRegression(n_components=2)
             )
         },
         {
             'name': 'MLPRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                MLPRegressor(hidden_layer_sizes=(128, 256, 128), solver='adam', activation='logistic', max_iter=5000)
+                MLPRegressor(hidden_layer_sizes=(100,), solver='adam', activation='logistic', max_iter=5000)
             )
         }
     ]
