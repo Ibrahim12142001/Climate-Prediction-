@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-data_folder = "weather_data"
+data_folder = "weather_data_ML_testing"
 
 dataframes = []
 
@@ -9,7 +9,7 @@ dataframes = []
 for filename in os.listdir(data_folder):
     if filename.endswith(".csv"):
         file_path = os.path.join(data_folder, filename)
-        city_name = filename.replace("_daily_weather_2000_2010.csv", "")  
+        city_name = filename.replace("_daily_weather_2011_2013.csv", "")  
         print(f"Processing {city_name}...")
 
         # Read the CSV file
@@ -31,6 +31,6 @@ for filename in os.listdir(data_folder):
 
 combined_data = pd.concat(dataframes, ignore_index=True)
 
-output_file = "combined_weather_data.csv"
+output_file = "combined_weather_data_2011_2013.csv"
 combined_data.to_csv(output_file, index=False)
 print(f"All data combined and saved to {output_file}")

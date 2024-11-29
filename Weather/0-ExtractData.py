@@ -9,7 +9,7 @@ with open("capitals.json", "r") as f:
 
 url = "https://archive-api.open-meteo.com/v1/archive"
 request_delay = 5
-years = range(2011, 2013)
+years = range(2011, 2014)
 output_folder = "weather_data_ML_testing"
 os.makedirs(output_folder, exist_ok=True)
 
