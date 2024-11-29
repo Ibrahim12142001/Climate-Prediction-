@@ -3,8 +3,8 @@ import os
 
 
 file_directory = "USA/"
-MAX_YEAR = 2017
-MIN_YEAR = 2011
+MAX_YEAR = 2015
+MIN_YEAR = 2000
 
 
 def interpolate_monthly_data(data):
@@ -50,7 +50,7 @@ def process_file(file_path, city_name):
                 'Year': [2000]
             })
         
-    data = pd.concat([new_row, data]).sort_values(by='Year').reset_index(drop=True)
+            data = pd.concat([new_row, data]).sort_values(by='Year').reset_index(drop=True)
         
         
     interpolated_data = interpolate_monthly_data(data)
@@ -69,8 +69,7 @@ def handle_Directory(dir_path):
 allData =  handle_Directory(file_directory)
 allData = allData[(allData['Year'] >= MIN_YEAR) & (allData['Year'] <= MAX_YEAR)]
 allData.drop(['Date'], axis=1, inplace=True)
-print(allData.columns)
-allData.to_csv('GDP_per_Capita_USA_2.csv', index=False)
+allData.to_csv('GDP_per_Capita_USA.csv', index=False)
 
         
        
