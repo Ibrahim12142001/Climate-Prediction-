@@ -67,8 +67,8 @@ def main():
         MultiOutputRegressor(GradientBoostingRegressor())
     )
     param_grid = {
-        'multioutputregressor__estimator__n_estimators': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-        'multioutputregressor__estimator__max_depth': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        'multioutputregressor__estimator__n_estimators': [600, 700, 800, 900, 1000],
+        'multioutputregressor__estimator__max_depth': [1, 3, 5, 10, 15, 20],
         'multioutputregressor__estimator__loss': ['squared_error', 'absolute_error', 'huber', 'quantile'],
         'multioutputregressor__estimator__learning_rate': [0.1, 0.2, 0.05],
         'multioutputregressor__estimator__subsample': [0.8, 0.9, 1.0],

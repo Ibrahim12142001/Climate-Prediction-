@@ -54,7 +54,17 @@ def main():
             'name': 'GradientBoostingRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                MultiOutputRegressor(GradientBoostingRegressor(n_estimators=200))
+                MultiOutputRegressor(GradientBoostingRegressor(
+                    n_estimators=800, 
+                    subsample=1.0, 
+                    min_samples_split=5, 
+                    min_samples_leaf=3, 
+                    max_features='sqrt', 
+                    max_depth=10, 
+                    loss='squared_error', 
+                    learning_rate=0.1, 
+                    criterion='squared_error')
+                )
                 # GradientBoostingRegressor(n_estimators=200)
             )
         },
