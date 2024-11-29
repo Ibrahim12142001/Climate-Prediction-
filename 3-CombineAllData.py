@@ -26,8 +26,15 @@ def main():
     emissions_file = "Emissions/city_emissions_data.csv"
     population_file = "Population/Population_density.csv"
     GDP_file = "GDP_Data/GDP_per_Capita_Data.csv"
+    
+    #2011 to 2013 data
+    weather_file2013 = "Weather/combined_weather_data_2011_2013.csv"
+    emissions_file2013 = "Emissions/city_emissions_2011_2013.csv"
+    
     weather_data = pd.read_csv(weather_file,parse_dates=['date'])
     emissions_data = pd.read_csv(emissions_file,parse_dates=['date'])
+    weather_data2013 = pd.read_csv(weather_file2013,parse_dates=['date'])
+    emissions_data2013 = pd.read_csv(emissions_file2013,parse_dates=['date'])
     population_data = pd.read_csv(population_file,parse_dates=['date'])
     GDP_data = pd.read_csv(GDP_file,parse_dates=['date'])
     data = monthly_weather(weather_data)
@@ -49,8 +56,17 @@ def main():
     
     merged_data.drop(['date_x', 'Year', 'Month', 'State'], axis=1, inplace=True)
     merged_data.rename(columns={'date_y': 'date'}, inplace=True)
+
     merged_data.to_csv('Combined_Data.csv', index=False)
     
+    data2013 = monthly_weather(weather_data2013)
+    merged_data2013 = pd.merge(data2013, emissions_data2013, on=['city', 'year', 'month'], how='inner')
+    merged_data2013 = pd.merge(merged_data2013, population_data, on=['city', 'year', 'month'], how='inner')
+    merged_data2013 = pd.merge(merged_data2013, GDP_data, on=['city', 'year', 'month'], how='inner')
+    merged_data2013.drop(['date_x', 'Year', 'Month', 'State'], axis=1, inplace=True)
+    merged_data2013.rename(columns={'date_y': 'date'}, inplace=True)
+    merged_data2013.to_csv('Combined_Data_2011_2013.csv', index=False)
+
 
 if __name__ == '__main__':
     main()
