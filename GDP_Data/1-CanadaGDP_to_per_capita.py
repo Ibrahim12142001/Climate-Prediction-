@@ -1,26 +1,15 @@
 import pandas as pd
 import os
-from HelperFiles.shared import province_abbv_map
 
 file_directory = "Canada/"
-MAX_YEAR = 2010
+MAX_YEAR = 2015
 MIN_YEAR = 2000
 
-pop_file = "HelperFiles/province_pop_data_2000-2011.csv"
+pop_file = "../Population/state_province_population.csv"
 
 
 
-# Greg's code for province population
-def read_province_population_data(province_pop_file):
-    pop_data = pd.read_csv(province_pop_file, parse_dates=[0])
-    pop_data = pop_data[pop_data['GEO'].isin(province_abbv_map.keys())] # keep only provinces we want
-    pop_data = pop_data[pop_data['REF_DATE'].dt.month == 10] # keep only Q4 data to match US scaling
-    pop_data = pop_data[['REF_DATE', 'GEO', 'VALUE']] # trim down to the columns we want
-    pop_data.columns = ['year', 'province', 'value'] # rename columns
-    pop_data['year'] = pop_data['year'].dt.year
-    pop_data['province'] = pop_data['province'].apply(lambda x: province_abbv_map[x])
-    pop_data = pop_data.sort_values(by=['province', 'year'])
-    return pop_data
+
 
 def interpolate_monthly_data(data):
     interpolated_data = []
@@ -30,20 +19,19 @@ def interpolate_monthly_data(data):
         group.set_index('date', inplace=True)
         monthly_index = pd.date_range(start=group.index.min(), end=group.index.max(), freq='MS')
         group = group.reindex(monthly_index)
-        group['City'] = city
-        group['GDP per Capita'] = group['GDP per Capita'].interpolate(method='linear')
+        group['city'] = city
+        group['GDP'] = group['GDP'].interpolate(method='linear')
         group.reset_index(inplace=True)
         group.rename(columns={'index': 'date'}, inplace=True)
-        group['Year'] = group['date'].dt.year
-        group['Month'] = group['date'].dt.month
+        group['year'] = group['date'].dt.year
+        group['month'] = group['date'].dt.month
         interpolated_data.append(group)
     return pd.concat(interpolated_data, ignore_index=True)
 
 
-city_province = pd.read_excel("HelperFiles/Provence_to_Abrivation.xlsx") 
-pop_data = read_province_population_data(pop_file)
+pop_data = pd.read_csv(pop_file)
+pop_data.drop(['date', 'abr', 'state_province'], axis=1, inplace=True)
 
-merged_data = pd.merge(city_province, pop_data, on=['province'], how='inner')
 
 
 def process_file(file_path, city_name): 
@@ -73,12 +61,11 @@ def process_file(file_path, city_name):
             'year': [2000]
         })
         data = pd.concat([new_row, data]).sort_values(by='year').reset_index(drop=True)
-    
-    data = pd.merge(data, merged_data, on=['city', 'year'], how='inner')
-    data['GDP per Capita']= (data['GDP']/data['value']) * 0.72
         
     interpolated_data = interpolate_monthly_data(data)
-    return interpolated_data
+    data = pd.merge(interpolated_data, pop_data, on=['city', 'year','month'], how='inner')
+    data['GDP per Capita']= (data['GDP']/data['population']) * 0.72
+    return data
 
 
 
@@ -92,6 +79,6 @@ def handle_Directory(dir_path):
     return pd.concat(allData, ignore_index=True)
 
 allData =  handle_Directory(file_directory)
-allData.drop(['Date','GDP','year','Full','value','city','province'], axis=1, inplace=True)
-allData = allData[(allData['Year'] >= MIN_YEAR) & (allData['Year'] <= MAX_YEAR)]
+allData.drop(['Date','GDP','population'], axis=1, inplace=True)
+allData = allData[(allData['year'] >= MIN_YEAR) & (allData['year'] <= MAX_YEAR)]
 allData.to_csv('GDP_per_Capita_Canada.csv', index=False)

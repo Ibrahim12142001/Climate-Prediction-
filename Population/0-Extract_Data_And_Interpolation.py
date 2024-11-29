@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import os
 
-MAX_YEAR = 2010
+MAX_YEAR = 2015
 MIN_YEAR = 2000
 
 file_path = "Manual_Population_data_collection.xlsx"
