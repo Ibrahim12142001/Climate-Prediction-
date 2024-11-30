@@ -17,7 +17,7 @@ def main():
     data = pd.read_csv(combined_data_path)
 
     # Extract the X and y data, X = input features, y = output values
-    X = data[['megatonnes CO2', 'GDP per Capita']]
+    X = data[['year', 'month', 'megatonnes CO2', 'GDP per Capita']]
     y = data[['temperature_2m_max', 'temperature_2m_min']] # regress on two values
 
     # Split the dataset into training and validation sets

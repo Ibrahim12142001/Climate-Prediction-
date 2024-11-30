@@ -16,8 +16,11 @@ def main():
     data = pd.read_csv(combined_data_path)
 
     # Extract the X and y data, X = input features, y = output values
-    X = data[['megatonnes CO2', 'GDP per Capita']]
+    X = data[['year', 'month', 'megatonnes CO2', 'GDP per Capita']]
     y = data[['temperature_2m_max', 'temperature_2m_min']] # regress on two values
+
+    # Split the dataset into training and validation sets
+    X_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8) # 80% training data, 20% validation data
 
     # Create our model
     # From our testing, we were able to get good results from a few different models, and a StackingRegressor allows us
@@ -54,13 +57,14 @@ def main():
             passthrough=False # dont passthrough data, train only on predicted values
         ))
     )
-    model.fit(X, y)
-    print(f'Model training score: {model.score(X, y)}')
+    model.fit(X_train, y_train)
+    print(f'Model training score: {model.score(X_train, y_train)}')
+    print(f'Model validation score: {model.score(X_valid, y_valid)}')
     
     # Model has been trained, let's try using it on data from 2011-2013
     test_data_path = '../Combined_Data_2011_2013.csv'
     test_data = pd.read_csv(test_data_path)
-    X_test = test_data[['megatonnes CO2', 'GDP per Capita']]
+    X_test = test_data[['year', 'month', 'megatonnes CO2', 'GDP per Capita']]
     y_test = test_data[['temperature_2m_max', 'temperature_2m_min']]
     print(f'Model score on future (2011-2013) data: {model.score(X_test, y_test)}')
 
