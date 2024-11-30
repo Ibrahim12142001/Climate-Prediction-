@@ -1,11 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.linear_model import LinearRegression, MultiTaskElasticNet, ElasticNet, SGDRegressor
+from sklearn.linear_model import LinearRegression, MultiTaskElasticNet, ElasticNet, SGDRegressor, RidgeCV, Ridge, Lasso, BayesianRidge, HuberRegressor
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor, GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor, GradientBoostingRegressor, VotingRegressor, StackingRegressor
 from sklearn.neural_network import MLPRegressor
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVR, NuSVR, LinearSVR
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -37,6 +37,34 @@ def main():
             )
         },
         {
+            'name': 'Ridge',
+            'model': make_pipeline(
+                MinMaxScaler(),
+                Ridge(fit_intercept=True)
+            )
+        },
+        {
+            'name': 'Lasso',
+            'model': make_pipeline(
+                MinMaxScaler(),
+                Lasso(fit_intercept=True)
+            )
+        },
+        {
+            'name': 'BayesianRidge',
+            'model': make_pipeline(
+                MinMaxScaler(),
+                MultiOutputRegressor(BayesianRidge(fit_intercept=True))
+            )
+        },
+        {
+            'name': 'HuberRegressor',
+            'model': make_pipeline(
+                MinMaxScaler(),
+                MultiOutputRegressor(HuberRegressor(fit_intercept=True))
+            )
+        },
+        {
             'name': 'KNeighbors Regressor',
             'model': make_pipeline(
                 MinMaxScaler(),
@@ -47,7 +75,13 @@ def main():
             'name': 'RandomForestRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                RandomForestRegressor(n_estimators=900, max_depth=30, max_features=None, min_samples_leaf=1, min_samples_split=2)
+                RandomForestRegressor(
+                    n_estimators=900, 
+                    max_depth=30, 
+                    max_features=None, 
+                    min_samples_leaf=1, 
+                    min_samples_split=2
+                )
             )
         },
         {
@@ -55,31 +89,30 @@ def main():
             'model': make_pipeline(
                 MinMaxScaler(),
                 MultiOutputRegressor(GradientBoostingRegressor(
-                    n_estimators=800, 
-                    subsample=1.0, 
-                    min_samples_split=5, 
-                    min_samples_leaf=3, 
-                    max_features='sqrt', 
-                    max_depth=10, 
-                    loss='squared_error', 
+                    n_estimators=700, 
+                    subsample=0.9, 
+                    min_samples_split=2, 
+                    min_samples_leaf=1, 
+                    max_features=None, 
+                    max_depth=20, 
+                    loss='absolute_error', 
                     learning_rate=0.1, 
-                    criterion='squared_error')
-                )
-                # GradientBoostingRegressor(n_estimators=200)
+                    criterion='friedman_mse'
+                ))
             )
         },
         {
             'name': 'AdaBoostRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                MultiOutputRegressor(AdaBoostRegressor(n_estimators=200))
+                MultiOutputRegressor(AdaBoostRegressor(n_estimators=800))
             )
         },
         {
             'name': 'MultiTaskElasticNet',
             'model': make_pipeline(
                 MinMaxScaler(),
-                ElasticNet()
+                MultiTaskElasticNet()
             )
         },
         {
@@ -109,7 +142,7 @@ def main():
             'name': 'MLPRegressor',
             'model': make_pipeline(
                 MinMaxScaler(),
-                MLPRegressor(hidden_layer_sizes=(100,), solver='adam', activation='logistic', max_iter=5000)
+                MLPRegressor(hidden_layer_sizes=(128, 128), solver='adam', activation='logistic', max_iter=5000)
             )
         }
     ]
@@ -123,6 +156,77 @@ def main():
         print(f'{name} validation score: {model.score(X_valid, y_valid)}')
         print(' ')
 
+    # Part 2: Test combining the models in a VotingRegressor and StackingRegressor
+    # StackingRegressor testing
+    estimators = [
+        ('kneighbors', KNeighborsRegressor(n_neighbors=3, algorithm='auto', leaf_size=5, p=1, weights='distance')),
+        ('randomforest', RandomForestRegressor(
+            n_estimators=900, 
+            max_depth=30, 
+            max_features=None, 
+            min_samples_leaf=1, 
+            min_samples_split=2
+        )),
+        ('gradientboosting', GradientBoostingRegressor(
+            n_estimators=700, 
+            subsample=0.9, 
+            min_samples_split=2, 
+            min_samples_leaf=1, 
+            max_features=None, 
+            max_depth=20, 
+            loss='absolute_error', 
+            learning_rate=0.1, 
+            criterion='friedman_mse'
+        ))
+    ]
+    stacking_model = make_pipeline(
+        MinMaxScaler(),
+        MultiOutputRegressor(StackingRegressor(
+            estimators=estimators,
+            final_estimator=LinearRegression(),
+            cv=5, # default cross validation
+            n_jobs=-1, # train models in parallel
+            passthrough=False # passthrough the training data for the final estimator
+        ))
+    )
+    stacking_model.fit(X_train, y_train)
+    print(f'StackingRegressor training score: {stacking_model.score(X_train, y_train)}')
+    print(f'StackingRegressor validation score: {stacking_model.score(X_valid, y_valid)}')
+    print(' ')
+
+    # VotingRegressor testing
+    estimators = [
+        ('kneighbors', KNeighborsRegressor(n_neighbors=3, algorithm='auto', leaf_size=5, p=1, weights='distance')),
+        ('randomforest', RandomForestRegressor(
+            n_estimators=900, 
+            max_depth=30, 
+            max_features=None, 
+            min_samples_leaf=1, 
+            min_samples_split=2
+        )),
+        ('gradientboosting', GradientBoostingRegressor(
+            n_estimators=700, 
+            subsample=0.9, 
+            min_samples_split=2, 
+            min_samples_leaf=1, 
+            max_features=None, 
+            max_depth=20, 
+            loss='absolute_error', 
+            learning_rate=0.1, 
+            criterion='friedman_mse'
+        ))
+    ]
+    voting_model = make_pipeline(
+        MinMaxScaler(),
+        MultiOutputRegressor(VotingRegressor(
+            estimators=estimators,
+            n_jobs=-1
+        ))
+    )
+    voting_model.fit(X_train, y_train)
+    print(f'VotingRegressor training score: {voting_model.score(X_train, y_train)}')
+    print(f'VotingRegressor validation score: {voting_model.score(X_valid, y_valid)}')
+    print(' ')
 
 if __name__ == '__main__':
     main()
