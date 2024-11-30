@@ -49,7 +49,13 @@ def main():
     ]
     model = make_pipeline(
         MinMaxScaler(),
-        KNeighborsRegressor(n_neighbors=3, algorithm='auto', leaf_size=5, p=1, weights='distance')
+        MultiOutputRegressor(StackingRegressor(
+            estimators=estimators,
+            final_estimator=LinearRegression(), # using LinearRegression as our final layer
+            cv=5, # default 5-fold cross validation
+            n_jobs=-1, # train models in parallel
+            passthrough=False # dont passthrough data, train only on predicted values
+        ))
     )
     model.fit(X_train, y_train)
     print(f'Model training score: {model.score(X_train, y_train)}')
