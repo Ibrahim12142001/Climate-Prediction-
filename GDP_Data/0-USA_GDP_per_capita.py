@@ -3,7 +3,7 @@ import os
 
 
 file_directory = "USA/"
-MAX_YEAR = 2010
+MAX_YEAR = 2015
 MIN_YEAR = 2000
 
 
@@ -38,18 +38,19 @@ def process_file(file_path, city_name):
     data['Date'] = pd.to_datetime(data['Date'])
     data['Year'] = data['Date'].dt.year
     data['GDP per Capita'] = data['GDP per Capita'].astype(int, errors='ignore')
-    if 2000 not in data['Year'].values:
-        gdp_2001 = data.loc[data['Year'] == 2001, 'GDP per Capita'].values[0]
-        gdp_2002 = data.loc[data['Year'] == 2002, 'GDP per Capita'].values[0]
-        gdp_2000 = gdp_2001 - (gdp_2002 - gdp_2001)
-        new_row = pd.DataFrame({
-            'Date': [pd.Timestamp('2000-01-01')],
-            'GDP per Capita': [gdp_2000],
-            'City': [city_name],
-            'Year': [2000]
-        })
+    if(2000 >= MIN_YEAR):
+        if 2000 not in data['Year'].values:
+            gdp_2001 = data.loc[data['Year'] == 2001, 'GDP per Capita'].values[0]
+            gdp_2002 = data.loc[data['Year'] == 2002, 'GDP per Capita'].values[0]
+            gdp_2000 = gdp_2001 - (gdp_2002 - gdp_2001)
+            new_row = pd.DataFrame({
+                'Date': [pd.Timestamp('2000-01-01')],
+                'GDP per Capita': [gdp_2000],
+                'City': [city_name],
+                'Year': [2000]
+            })
         
-        data = pd.concat([new_row, data]).sort_values(by='Year').reset_index(drop=True)
+            data = pd.concat([new_row, data]).sort_values(by='Year').reset_index(drop=True)
         
         
     interpolated_data = interpolate_monthly_data(data)
@@ -68,7 +69,6 @@ def handle_Directory(dir_path):
 allData =  handle_Directory(file_directory)
 allData = allData[(allData['Year'] >= MIN_YEAR) & (allData['Year'] <= MAX_YEAR)]
 allData.drop(['Date'], axis=1, inplace=True)
-print(allData.columns)
 allData.to_csv('GDP_per_Capita_USA.csv', index=False)
 
         

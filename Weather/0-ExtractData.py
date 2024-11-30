@@ -9,8 +9,8 @@ with open("capitals.json", "r") as f:
 
 url = "https://archive-api.open-meteo.com/v1/archive"
 request_delay = 5
-years = range(2000, 2011)
-output_folder = "weather_data"
+years = range(2011, 2014)
+output_folder = "weather_data_ML_testing"
 os.makedirs(output_folder, exist_ok=True)
 
 for city_name, info in capitals.items():
@@ -49,7 +49,7 @@ for city_name, info in capitals.items():
         time.sleep(request_delay)
 
     if not city_data.empty:
-        file_path = os.path.join(output_folder, f"{city_name}_daily_weather_2000_2010.csv")
+        file_path = os.path.join(output_folder, f"{city_name}_daily_weather_2011_2013.csv")
         try:
             existing_data = pd.read_csv(file_path)
             updated_data = pd.concat([existing_data, city_data], ignore_index=True)
