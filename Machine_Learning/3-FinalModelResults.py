@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import lzma
+import seaborn
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, StackingRegressor
@@ -50,7 +51,20 @@ def main():
         test_data[['year', 'month', 'megatonnes CO2', 'GDP per Capita']], test_data[['temperature_2m_max', 'temperature_2m_min']]
     )}')
 
-    # additional analysis below (if we have time)
+    # additional analysis below
+
+    # Final model residuals graph
+    seaborn.set_theme()
+    test_averages = (test_data['temperature_2m_max'].values + test_data['temperature_2m_min'].values) / 2
+    predicted_values = model_YearMonthCO2GDP.predict(test_data[['year', 'month', 'megatonnes CO2', 'GDP per Capita']])
+    predicted_averages = (predicted_values[:, 0] + predicted_values[:, 1]) / 2
+    residuals = test_averages - predicted_averages
+    plt.figure()
+    plt.title('Histogram of Best Model Averaged Residuals')
+    plt.xlabel('Temperature (°C) Residuals')
+    plt.ylabel('Frequency')
+    plt.hist(residuals, bins=20)
+    plt.savefig("BestModelAveragedResidualsHistogram.png")
 
 if __name__ == '__main__':
     main()
