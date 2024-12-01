@@ -1,6 +1,9 @@
 # CMPT353 Climate Change Project
 ## Project Description
 
+## Git LFS Warning
+This repo contains some files that were uploaded via Git LFS, and so you probably need to run `git lfs install` before pulling it!
+
 ## Python Dependencies
 Please pip install the following before running the code:
 ```

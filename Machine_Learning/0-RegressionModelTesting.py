@@ -32,35 +32,30 @@ def main():
         {
             'name': 'Linear Regression',
             'model': make_pipeline(
-                MinMaxScaler(),
                 LinearRegression(fit_intercept=True)
             )
         },
         {
             'name': 'Ridge',
             'model': make_pipeline(
-                MinMaxScaler(),
                 Ridge(fit_intercept=True)
             )
         },
         {
             'name': 'Lasso',
             'model': make_pipeline(
-                MinMaxScaler(),
                 Lasso(fit_intercept=True)
             )
         },
         {
             'name': 'BayesianRidge',
             'model': make_pipeline(
-                MinMaxScaler(),
                 MultiOutputRegressor(BayesianRidge(fit_intercept=True))
             )
         },
         {
             'name': 'HuberRegressor',
             'model': make_pipeline(
-                MinMaxScaler(),
                 MultiOutputRegressor(HuberRegressor(fit_intercept=True))
             )
         },

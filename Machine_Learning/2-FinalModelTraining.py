@@ -12,7 +12,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 
 def main():
-    # Part 1: Creating our final model
     # Read in the data from the combined data csv
     combined_data_path = '../Combined_Data.csv'
     data = pd.read_csv(combined_data_path)
@@ -71,6 +70,8 @@ def main():
     print(f'Model score on future (2011-2013) data: {model.score(X_test, y_test)}')
 
     # saving the model to disk using pickle
+    # note: this code only creates the model trained on year, month, CO2 and GDP per capita since it was the best one
+    # but a couple of other models were created using slight modifications to this script for analysis
     with lzma.open('model_YearMonthCO2GDP.xz', 'wb') as f:
         pickle.dump(model, f, protocol=5)
 
