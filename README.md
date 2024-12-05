@@ -91,6 +91,7 @@ Running **2-FinalModelTraining.py** can also take about 20 minutes. This step ca
 - 2-FinalModelTraining.py
 
 In the order to save time retraining the model we have provided the trained model that can be tested using the file below.
+
 **Testing**
 - 3-FinalModelResults.py
 
