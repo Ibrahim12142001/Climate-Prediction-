@@ -31,7 +31,7 @@ The code for this project can be divided into 3 seperate catagories
 3. Machine Learning Model
 
 ### Data Processing
-The data processing step takes in the raw data and applies ETL to obtain usable data for other steps. The project includes 4 different dirrectories to handle raw data from each fields. The data in these directories can be processed in any order as long an all the raw data is processed before combining the data.
+The data processing step takes in the raw data and applies ETL to obtain usable data for other steps. The project includes 4 different directories to handle raw data from each fields. The data in these directories can be processed in any order as long an all the raw data is processed before combining the data.
 
 The exact sequence of files to run and in which order can be found below. The python files do not require any additional inputs. The input file paths are hard coded based on this reposotorys.
 
@@ -73,7 +73,7 @@ The Statistical Test require the **Combined_Data.csv** file from the previous st
 - 2.1-Relation_Plots.py
 
 ### Machine Learning Model
-The machine learning model is trained on the data from the years 2000-2010 and we test its predictive ablity useing data for 3 years from 2011 to 2013.
+The machine learning model is trained on the data from the years 2000-2010 and we test its predictive ablity useing data for 3 years from 2011 to 2013. The code for training the model can be found in the directory called Machine_Learning.
 
 Training the model can be a really long process so it is not recommended to train it yourselfs but if you do please remember the following:
 
