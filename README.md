@@ -37,6 +37,11 @@ The exact sequence of files to run and in which order can be found below. The py
 
 The **0-ExtractData.py** in the weather section can take over an hour to run due to the API call limit and for the purpose of testing our model all the dataset have already been created so running the following python file is not mandatory to use the model.
 
+**Population**
+- 0-Extract_Data_And_Interpolation.py
+- 1-Population_Density.py
+- 2-State_and_Province_Population.py
+
 **Emissions**
 - 0-ExtractData.py
 - 1-TransformData.py
@@ -46,11 +51,6 @@ The **0-ExtractData.py** in the weather section can take over an hour to run due
 - 0-USA_GDP_per_capita.py
 - 1-CanadaGDP_to_per_capita.py
 - 2-Combine_US_Canada_GDP_Data.py
-
-**Population**
-- 0-Extract_Data_And_Interpolation.py
-- 1-Population_Density.py
-- 2-State_and_Province_Population.py
 
 **Weather**
 - 0-ExtractData.py
