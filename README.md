@@ -14,6 +14,7 @@ pip install retry-requests
 pip install matplotlib
 pip install openpyxl
 pip install xlrd
+pip install scikit-learn
 ```
 Or use the requirement.txt to pip install the Dependencies:
 ```
@@ -30,9 +31,12 @@ The data processing step takes in the raw data and applies ETL to obtain usable 
 
 The exact sequence of files to run and in which order can be found below. The python files do not require any additional inputs. The input file paths are hard coded based on this reposotorys.
 
+The **0-ExtractData.py** in the weather section can take over an hour to run due to the API call limit and for the purpose of testing our model all the dataset have already been created so running the following python file is not mandatory to use the model.
+
 **Emissions**
 - 0-ExtractData.py
 - 1-TransformData.py
+- 1.1-TransformData_ML_Testing.py
 
 **GDP_Data**
 - 0-USA_GDP_per_capita.py
@@ -42,6 +46,7 @@ The exact sequence of files to run and in which order can be found below. The py
 **Population**
 - 0-Extract_Data_And_Interpolation.py
 - 1-Population_Density.py
+- 2-State_and_Province_Population.py
 
 **Weather**
 - 0-ExtractData.py
@@ -52,7 +57,7 @@ The next step requires the output files from all the previous fields and should 
 **Combining Data**
 - 3-CombineAllData.py
 
-At this point you will have a file called **Combined_Data.csv** which has the combined data from all the fields.
+At this point you will have 2 files called **Combined_Data.csv** and **Combined_Data_2011_2013.csv** which has the combined data from all the fields.
 
 ### Statistical Tests
 The Statistical Test require the **Combined_Data.csv** file from the previous steps. This file is used to conduct test and produce plots on the results of these tests. In order to conduct the test go to the **Statistical_Testing** directory and run the python files in the following order. The python file do not require any input files since the location for the Combined_Data.csv file is hard coded into them.
@@ -64,4 +69,20 @@ The Statistical Test require the **Combined_Data.csv** file from the previous st
 - 2.1-Relation_Plots.py
 
 ### Machine Learning Model
-### Testing
+The machine learning model is trained on the data from the years 2000-2010 and we test its predictive ablity useing data for 3 years from 2011 to 2013.
+
+Training the model can be a really long process so it is not recommended to train it your selfs but if you do please remember the following:
+
+Running **0-RegressionModelTesting.py** can take about 20 minutes
+Running **1-HyperparameterTuning.py** can take over 8 hours
+**Finding the best Model**
+- 0-RegressionModelTesting.py
+- 1-HyperparameterTuning.py
+
+**Training the Model**
+- 2-FinalModelTraining.py
+
+**Testing**
+- 3-FinalModelResults.py
+
+
