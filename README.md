@@ -1,6 +1,9 @@
 # CMPT353 Climate Change Project
 ## Project Description
 
+## Recommended Python Version
+We recommend using the latest version of Python which at this time is 3.13.1
+
 ## Git LFS Warning
 This repo contains some files that were uploaded via Git LFS, and so you probably need to run `git lfs install` before pulling it!
 
@@ -15,6 +18,7 @@ pip install matplotlib
 pip install openpyxl
 pip install xlrd
 pip install scikit-learn
+pip install seaborn
 ```
 Or use the requirement.txt to pip install the Dependencies:
 ```
@@ -71,13 +75,17 @@ The Statistical Test require the **Combined_Data.csv** file from the previous st
 ### Machine Learning Model
 The machine learning model is trained on the data from the years 2000-2010 and we test its predictive ablity useing data for 3 years from 2011 to 2013.
 
-Training the model can be a really long process so it is not recommended to train it your selfs but if you do please remember the following:
+Training the model can be a really long process so it is not recommended to train it yourselfs but if you do please remember the following:
 
 Running **0-RegressionModelTesting.py** can take about 20 minutes
+
 Running **1-HyperparameterTuning.py** can take over 8 hours
+
 **Finding the best Model**
 - 0-RegressionModelTesting.py
 - 1-HyperparameterTuning.py
+
+Running **2-FinalModelTraining.py** can also take about 20 minutes. This step can be done without running the **0-RegressionModelTesting.py and 1-HyperparameterTuning.py** since we already did that and found the models to use and there parameters.
 
 **Training the Model**
 - 2-FinalModelTraining.py
