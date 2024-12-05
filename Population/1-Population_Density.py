@@ -24,6 +24,8 @@ def main():
         merged_data['Area(km^2)'] = merged_data['Area(km^2)'].str.replace(',', '').str.strip()
     merged_data['Population Density'] = merged_data['Population']/merged_data['Area(km^2)']
     
+    print(merged_data.columns)
+    
     merged_data.to_csv('Population_density.csv', index=False)
     
     
