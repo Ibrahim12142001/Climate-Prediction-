@@ -1,6 +1,6 @@
 # CMPT353 Climate Insights Project
 ## Project Description
-Github repository for our project that focused on "Climate Insights: Predicting Temperatures with CO₂ and GDP". Here you will find all of our code, as well as our raw data files that we obtained from sources indicated in the report.
+This project investigates the impact of socio-economic factors, such as CO₂ emissions and GDP per capita, on climate change. Using freely available datasets, we aim to analyze these relationships and predict future trends by training a machine learning model. This reposotory contains all the data used to write the report "Climate Insights: Predicting Temperatures with CO₂ and GDP" along with our code used to extract and transform data, train and test our model.
 
 ## Recommended Python Version
 We recommend using the latest version of Python which at this time is 3.13.1
